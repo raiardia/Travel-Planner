@@ -3,3 +3,6 @@ jobdesc: membuat tour page
 
 42230040-Putu Surya Jaya Permana
 jobdesc: membuat add_trip_page
+
+42230019-Ni Made Rai Ardia Anggreni 
+jobdesc: menambahkan komponen antarmuka utama pada layar Home
