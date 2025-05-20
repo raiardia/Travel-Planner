@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart'; // Mengimpor library Material Design untuk membangun UI aplikasi Flutter.
 import 'login.dart'; // Mengimpor file `login.dart`, yang kemungkinan berisi implementasi halaman login.
+import 'register.dart';
 
 void main() {
   // Fungsi utama yang menjadi titik awal eksekusi aplikasi.
