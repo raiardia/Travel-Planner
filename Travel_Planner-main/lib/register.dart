@@ -18,7 +18,7 @@ class _RegisterState extends State<Register> {
   final TextEditingController passwordController = TextEditingController();
 
   Future<void> registerUser() async {
-    final url = Uri.parse('http://192.168.1.26:3000/users/register');
+    final url = Uri.parse('http://192.168.18.196:3000/users/register');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
