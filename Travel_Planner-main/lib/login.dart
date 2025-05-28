@@ -167,27 +167,18 @@ class _LoginState extends State<Login> {
                                       ),
                                     ),
                                     const SizedBox(
-                                      height: 40,
+                                      height: 15,
                                     ), // Memberikan jarak vertikal.
                                     // Tombol login sosial
-                                    socialLoginButton(
-                                      // Tombol login sosial.
-                                      'Login With Google', // Teks tombol.
-                                      'assets/images/google.png', // Path gambar.
-                                    ),
-                                    SizedBox(height: 2), // Spasi vertikal.
-                                    socialLoginButton(
-                                      // Tombol login sosial.
-                                      'Login With Facebook', // Teks tombol.
-                                      'assets/images/facebook.png', // Path gambar.
-                                    ),
-
-                                    const Divider(), // Garis pembatas.
+                                    Divider(
+                                      thickness: 1,
+                                      color: Colors.grey,
+                                    ), // Garis pembatas.
                                     // Input Email
-                                    inputField(
+                                    buildInputField(
                                       // Field input email.
                                       icon: Icons.email, // Ikon.
-                                      label: 'Email :', // Label.
+                                      label: 'Email', // Label.
                                       hintText:
                                           'example@gmail.com', // Hint text.
                                       controller:
@@ -198,10 +189,10 @@ class _LoginState extends State<Login> {
                                       height: 10,
                                     ), // Memberikan jarak vertikal.
                                     // Input Password
-                                    inputField(
+                                    buildInputField(
                                       // Field input password.
                                       icon: Icons.key, // Ikon.
-                                      label: 'Password :', // Label.
+                                      label: 'Password', // Label.
                                       hintText:
                                           'Masukkan Password', // Hint text.
                                       controller:
@@ -409,85 +400,67 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget inputField({
-    // Widget untuk field input.
-    required IconData icon, // Ikon.
-    required String label, // Label.
-    required String hintText, // Hint text.
-    required TextEditingController controller, // Controller.
-    bool isPassword = false, // Menandakan ini field password.
-    bool obscureText = false, // Mengontrol visibilitas teks.
-    VoidCallback? toggleObscure, // Fungsi untuk mengubah visibilitas teks.
+  Widget buildInputField({
+    required IconData icon,
+    required String label,
+    required String hintText,
+    required TextEditingController controller,
+    bool isPassword = false,
+    bool obscureText = false,
+    VoidCallback? toggleObscure,
   }) {
-    return Container(
-      // Container untuk field input.
-      width: double.infinity, // Lebar container.
-      height: 35, // Tinggi container.
-      decoration: BoxDecoration(
-        // Dekorasi container.
-        color: const Color.fromARGB(
-          255,
-          206,
-          206,
-          206,
-        ), // Warna latar belakang container.
-        borderRadius: BorderRadius.circular(10), // Radius border container.
-      ),
-      child: Row(
-        // Baris untuk ikon, label, dan text field.
-        children: [
-          // Daftar widget di dalam baris.
-          const SizedBox(width: 15), // Spasi.
-          Icon(icon), // Ikon.
-          const SizedBox(width: 15), // Spasi.
-          Text(label), // Label.
-          Expanded(
-            // Memenuhi sisa ruang yang tersedia.
-            child: TextField(
-              // Field input.
-              controller: controller, // Controller.
-              obscureText:
-                  isPassword
-                      ? obscureText
-                      : false, // Mengontrol visibilitas teks.
-              keyboardType: // Tipe keyboard.
-                  isPassword
-                      ? TextInputType.visiblePassword
-                      : TextInputType.emailAddress,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, size: 18),
+            const SizedBox(width: 8),
+            Text(
+              label,
               style: const TextStyle(
-                color: Colors.black,
                 fontSize: 16,
-              ), // Style teks.
-              decoration: InputDecoration(
-                // Dekorasi field input.
-                hintText: hintText, // Hint text.
-                border: InputBorder.none, // Tidak ada border.
-                contentPadding: const EdgeInsets.symmetric(
-                  // Padding konten.
-                  horizontal: 8,
-                  vertical: 9,
-                ),
-                suffixIcon: // Ikon di akhir field input.
-                    isPassword &&
-                            toggleObscure !=
-                                null // Jika ini field password dan ada fungsi toggle.
-                        ? IconButton(
-                          // Tombol untuk mengubah visibilitas.
-                          onPressed:
-                              toggleObscure, // Fungsi yang dipanggil saat ditekan.
-                          icon: Icon(
-                            // Ikon visibilitas.
-                            obscureText
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
-                        )
-                        : null, // Jika tidak, tidak ada ikon.
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
               ),
             ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 206, 206, 206),
+            borderRadius: BorderRadius.circular(10),
           ),
-        ],
-      ),
+          child: TextField(
+            controller: controller,
+            obscureText: isPassword ? obscureText : false,
+            keyboardType:
+                isPassword
+                    ? TextInputType.visiblePassword
+                    : TextInputType.emailAddress,
+            style: const TextStyle(color: Colors.black, fontSize: 16),
+            decoration: InputDecoration(
+              hintText: hintText,
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 15,
+                vertical: 9,
+              ),
+              suffixIcon:
+                  isPassword && toggleObscure != null
+                      ? IconButton(
+                        onPressed: toggleObscure,
+                        icon: Icon(
+                          obscureText ? Icons.visibility : Icons.visibility_off,
+                        ),
+                      )
+                      : null,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

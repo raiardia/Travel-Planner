@@ -53,6 +53,7 @@ class _RegisterState extends State<Register> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Logo atau Gambar
               Container(
                 width: 100,
                 height: 100,
@@ -62,72 +63,48 @@ class _RegisterState extends State<Register> {
                 ),
                 child: Image.asset('assets/images/Frame 1.png'),
               ),
-              SizedBox(height: 40),
+              SizedBox(height: 15),
+              Divider(thickness: 1, color: Colors.grey),
+
+              // Input Fields
               buildInputField(
-                Icons.person,
-                'Nama :',
-                'Nama lengkap',
-                nameController,
+                icon: Icons.person,
+                label: 'Nama',
+                hintText: 'Nama lengkap',
+                controller: nameController,
               ),
               SizedBox(height: 10),
               buildInputField(
-                Icons.phone,
-                'HP :',
-                '08xxxxxxxxxx',
-                phoneController,
+                icon: Icons.phone,
+                label: 'HP',
+                hintText: '08xxxxxxxxxx',
+                controller: phoneController,
               ),
               SizedBox(height: 10),
               buildInputField(
-                Icons.email,
-                'Email :',
-                'example@gmail.com',
-                emailController,
+                icon: Icons.email,
+                label: 'Email',
+                hintText: 'example@gmail.com',
+                controller: emailController,
               ),
               SizedBox(height: 10),
-              Container(
-                width: double.infinity,
-                height: 35,
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 206, 206, 206),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    SizedBox(width: 15),
-                    Icon(Icons.key),
-                    SizedBox(width: 15),
-                    Text('Password :'),
-                    Expanded(
-                      child: TextField(
-                        controller: passwordController,
-                        obscureText: _obscureText,
-                        style: TextStyle(color: Colors.black, fontSize: 16),
-                        decoration: InputDecoration(
-                          hintText: 'Masukkan Password',
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 9,
-                          ),
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _obscureText = !_obscureText;
-                              });
-                            },
-                            icon: Icon(
-                              _obscureText
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              buildInputField(
+                icon: Icons.key,
+                label: 'Password',
+                hintText: 'Masukkan Password',
+                controller: passwordController,
+                isPassword: true,
+                obscureText: _obscureText,
+                toggleObscure: () {
+                  setState(() {
+                    _obscureText = !_obscureText;
+                  });
+                },
               ),
+
               SizedBox(height: 20),
+
+              // Tombol Register
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 99, 88, 220),
@@ -139,11 +116,15 @@ class _RegisterState extends State<Register> {
                 onPressed: registerUser,
                 child: Text('Register', style: TextStyle(color: Colors.white)),
               ),
+
+              SizedBox(height: 10),
+
+              // Link ke Login
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Do You have an Account? ',
+                    'Do you have an account? ',
                     style: TextStyle(fontSize: 13),
                   ),
                   GestureDetector(
@@ -155,6 +136,7 @@ class _RegisterState extends State<Register> {
                       style: TextStyle(
                         color: const Color.fromARGB(255, 114, 33, 243),
                         fontSize: 13,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -167,41 +149,67 @@ class _RegisterState extends State<Register> {
     );
   }
 
-  Widget buildInputField(
-    IconData icon,
-    String label,
-    String hintText,
-    TextEditingController controller,
-  ) {
-    return Container(
-      width: double.infinity,
-      height: 35,
-      decoration: BoxDecoration(
-        color: Color.fromARGB(255, 206, 206, 206),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          SizedBox(width: 15),
-          Icon(icon),
-          SizedBox(width: 15),
-          Text(label),
-          Expanded(
-            child: TextField(
-              controller: controller,
-              style: TextStyle(color: Colors.black, fontSize: 16),
-              decoration: InputDecoration(
-                hintText: hintText,
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 9,
-                ),
+  Widget buildInputField({
+    required IconData icon,
+    required String label,
+    required String hintText,
+    required TextEditingController controller,
+    bool isPassword = false,
+    bool obscureText = false,
+    VoidCallback? toggleObscure,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, size: 18),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
               ),
             ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 206, 206, 206),
+            borderRadius: BorderRadius.circular(10),
           ),
-        ],
-      ),
+          child: TextField(
+            controller: controller,
+            obscureText: isPassword ? obscureText : false,
+            keyboardType:
+                isPassword
+                    ? TextInputType.visiblePassword
+                    : TextInputType.emailAddress,
+            style: const TextStyle(color: Colors.black, fontSize: 16),
+            decoration: InputDecoration(
+              hintText: hintText,
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 15,
+                vertical: 9,
+              ),
+              suffixIcon:
+                  isPassword && toggleObscure != null
+                      ? IconButton(
+                        onPressed: toggleObscure,
+                        icon: Icon(
+                          obscureText ? Icons.visibility : Icons.visibility_off,
+                        ),
+                      )
+                      : null,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
