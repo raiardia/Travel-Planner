@@ -207,8 +207,9 @@ class AddTourPage extends StatelessWidget {
                         week * 7 +
                         index +
                         1; // Menghitung nomor hari dalam bulan.
-                    if (day < 1 || day > 31)
+                    if (day < 1 || day > 31) {
                       return const SizedBox(); // Jika nomor hari di luar rentang 1-31, kembalikan widget kosong.
+                    }
                     final isSelected =
                         day == 5 ||
                         day ==

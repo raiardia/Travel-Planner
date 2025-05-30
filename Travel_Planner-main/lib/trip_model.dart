@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart'; // Mengimpor library Material Design untuk membangun UI aplikasi Flutter.
 
+
 class Trip {
   // Mendefinisikan kelas `Trip`, yang kemungkinan merepresentasikan informasi tentang sebuah perjalanan.
   final String

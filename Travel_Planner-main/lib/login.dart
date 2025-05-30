@@ -430,7 +430,7 @@ class _LoginState extends State<Login> {
         Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 206, 206, 206),
+            color: const Color.fromARGB(255, 200, 194, 194),
             borderRadius: BorderRadius.circular(10),
           ),
           child: TextField(
