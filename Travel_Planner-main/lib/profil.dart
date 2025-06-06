@@ -2,6 +2,33 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+class SlightBottomCurveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+
+    path.lineTo(0, size.height - 16.5);
+
+    final controlPoint = Offset(size.width / 2, size.height + 17);
+    final endPoint = Offset(size.width, size.height - 20);
+
+    path.quadraticBezierTo(
+      controlPoint.dx,
+      controlPoint.dy,
+      endPoint.dx,
+      endPoint.dy,
+    );
+
+    path.lineTo(size.width, 0);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -93,41 +120,49 @@ class _ProfilePageState extends State<ProfilePage> {
           Stack(
             clipBehavior: Clip.none,
             children: [
-              Container(
-                height: 215,
-                decoration: const BoxDecoration(
-                  color: const Color.fromARGB(255, 96, 138, 180),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(40),
-                    bottomRight: Radius.circular(40),
+              PhysicalShape(
+                clipper: SlightBottomCurveClipper(),
+                elevation: 8,
+                color: const Color.fromARGB(
+                  255,
+                  96,
+                  138,
+                  180,
+                ), // Warna Container
+                shadowColor: Colors.black38,
+                child: Container(
+                  height: 210,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 20,
                   ),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 20,
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Icon(Icons.notifications_none),
-                        Icon(Icons.more_vert),
-                      ],
-                    ),
-                    const Text(
-                      'Profil',
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: const [
+                            Icon(Icons.notifications_none),
+
+                            Text(
+                              'Profil',
+                              style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                            Icon(Icons.more_vert),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               Positioned(
-                top: 150,
+                top: 160,
                 left: 0,
                 right: 0,
                 child: Column(
