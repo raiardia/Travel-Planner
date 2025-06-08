@@ -1,111 +1,106 @@
-import 'package:flutter/material.dart'; // Mengimpor library Material Design untuk membangun UI aplikasi Flutter.
+import 'package:flutter/material.dart';
+import 'package:project_travelplanner/home.dart';
+import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
 
-class AddTourPage extends StatelessWidget {
-  // Mendefinisikan kelas `AddTourPage`, yang merupakan widget stateless (tampilannya tidak berubah setelah dibuat).
-  const AddTourPage({
-    super.key,
-  }); // Konstruktor untuk kelas `AddTourPage`. `super.key` meneruskan key ke konstruktor superkelas (StatelessWidget).
+class AddTourPage extends StatefulWidget {
+  const AddTourPage({super.key});
 
-  @override // Meng-override metode `build` dari superkelas `StatelessWidget`. Metode ini mendefinisikan tampilan widget.
+  @override
+  State<AddTourPage> createState() => _AddTourPageState();
+}
+
+class _AddTourPageState extends State<AddTourPage> {
+  DateTime selectedDate = DateTime.now();
+  CalendarFormat _calendarFormat = CalendarFormat.month;
+
+  // Buat controller sebagai state supaya tidak hilang saat rebuild
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _tourAboutController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _remarksController = TextEditingController();
+
+  // Inisialisasi _rangeFocusedDay supaya tidak null
+  DateTime _rangeFocusedDay = DateTime.now();
+  RangeSelectionMode _rangeSelectionMode = RangeSelectionMode.toggledOff;
+  DateTime? _rangeStart;
+  DateTime? _rangeEnd;
+
+  @override
+  void dispose() {
+    // Jangan lupa dispose controller saat widget dihapus
+    _dateController.dispose();
+    _tourAboutController.dispose();
+    _locationController.dispose();
+    _remarksController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Metode `build` menerima `BuildContext` yang berisi informasi tentang lokasi widget dalam hierarki widget.
     return Scaffold(
-      // Mengembalikan widget `Scaffold`, yang menyediakan struktur dasar tata letak Material Design.
-      backgroundColor: const Color(
-        0xFFFFFADD,
-      ), // Menetapkan warna latar belakang halaman menjadi krem.
+      backgroundColor: const Color.fromARGB(255, 34, 102, 141),
       appBar: AppBar(
-        // Widget AppBar untuk menampilkan judul di bagian atas halaman.
-        backgroundColor: const Color(
-          0xFFFFFADD,
-        ), // Menetapkan warna latar belakang AppBar menjadi krem (sama dengan body).
-        elevation: 0, // Menghilangkan bayangan di bawah AppBar.
-        leading: IconButton(
-          // Widget tombol ikon di sisi kiri AppBar (biasanya untuk navigasi kembali).
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.black87,
-          ), // Ikon panah kembali dengan warna abu-abu gelap.
-          onPressed:
-              () => Navigator.pop(
-                context,
-              ), // Fungsi yang dipanggil saat tombol kembali ditekan, akan kembali ke halaman sebelumnya.
-        ),
-        title: const Text(
-          // Widget Text untuk menampilkan judul AppBar.
-          'Add tour reminder',
-          style: TextStyle(
-            color: Colors.black87,
-          ), // Style teks judul dengan warna abu-abu gelap.
-        ),
-        centerTitle:
-            false, // Mengatur agar judul AppBar tidak berada di tengah.
+        foregroundColor: Colors.white,
+        backgroundColor: const Color.fromARGB(255, 34, 102, 141),
+        elevation: 0,
+        title: const Text('Add tour reminder'),
+        centerTitle: false,
       ),
       body: SingleChildScrollView(
-        // Widget yang memungkinkan konten di dalamnya di-scroll jika melebihi ukuran layar.
-        padding: const EdgeInsets.all(
-          16,
-        ), // Memberikan padding di sekitar konten yang dapat di-scroll.
+        padding: const EdgeInsets.all(16),
         child: Column(
-          // Menata child widget secara vertikal.
-          crossAxisAlignment:
-              CrossAxisAlignment
-                  .start, // Mengatur alignment horizontal child widget ke kiri.
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildCalendar(), // Memanggil metode untuk membangun tampilan kalender.
-            const SizedBox(
-              height: 20,
-            ), // Memberikan jarak vertikal sebesar 20 logical pixels.
-            _buildLabeledField(
-              'Date',
-              'Jan 5 - Jan 7',
-            ), // Memanggil metode untuk membangun field input dengan label "Date" dan nilai awal "Jan 5 - Jan 7".
+            _buildTableCalendar(),
+            const SizedBox(height: 20),
+            _buildLabeledField('Date', null, _dateController),
             _buildLabeledField(
               "What's the tour about",
-              'Mount Bromo Sunrise Adventure',
-            ), // Memanggil metode untuk membangun field input dengan label "What's the tour about" dan nilai awal "Mount Bromo Sunrise Adventure".
-            _buildLabeledFieldWithIcon(
-              'Location',
-              'East Java',
-              Icons.search,
-            ), // Memanggil metode untuk membangun field input dengan label "Location", nilai awal "East Java", dan ikon pencarian.
+              null,
+              _tourAboutController,
+            ),
+            _buildLabeledField('Location', Icons.search, _locationController),
             _buildLabeledField(
-              'Remarks', // Memanggil metode untuk membangun field input dengan label "Remarks" dan nilai awal yang panjang.
-              'Bring a jacket, mask, confirm jeep 3 days before',
+              'Remarks',
+              null,
+              _remarksController,
               maxLines: 4,
-            ), // Mengatur agar field "Remarks" dapat menampilkan hingga 4 baris teks.
-            const SizedBox(
-              height: 20,
-            ), // Memberikan jarak vertikal sebesar 20 logical pixels.
-            SizedBox(
-              // Widget untuk mengatur ukuran child-nya.
-              width:
-                  double
-                      .infinity, // Membuat tombol memenuhi lebar maksimum yang tersedia.
-              height: 50, // Mengatur tinggi tombol menjadi 50 logical pixels.
-              child: ElevatedButton(
-                // Widget tombol yang memiliki tampilan yang ditinggikan.
-                style: ElevatedButton.styleFrom(
-                  // Mengatur style tombol.
-                  backgroundColor: const Color(
-                    0xFFFFC700,
-                  ), // Menetapkan warna latar belakang tombol menjadi kuning keemasan.
-                  shape: RoundedRectangleBorder(
-                    // Mengatur bentuk border tombol menjadi rounded.
-                    borderRadius: BorderRadius.circular(
-                      30,
-                    ), // Radius border sebesar 30 logical pixels.
+            ),
+            const SizedBox(height: 20),
+            Center(
+              child: SizedBox(
+                width: 110,
+                height: 50,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFFC700),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
                   ),
-                ),
-                onPressed:
-                    () {}, // Fungsi kosong yang akan dipanggil saat tombol ditekan (belum ada aksi yang diimplementasikan).
-                child: const Text(
-                  // Widget Text untuk menampilkan teks pada tombol.
-                  'Save',
-                  style: TextStyle(
-                    color: Colors.black87, // Warna teks tombol abu-abu gelap.
-                    fontWeight:
-                        FontWeight.bold, // Membuat teks tombol menjadi tebal.
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (builder) => HomePage(initialTabIndex: 1),
+                      ),
+                      (route) => false,
+                    );
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.save, color: Colors.black87),
+                      SizedBox(width: 5),
+                      Text(
+                        'Save',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -116,179 +111,159 @@ class AddTourPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCalendar() {
-    // Metode untuk membangun tampilan kalender.
+  Widget _buildTableCalendar() {
     return Container(
-      // Widget container untuk mengatur tampilan kalender.
-      padding: const EdgeInsets.all(
-        16,
-      ), // Memberikan padding di sekitar tampilan kalender.
       decoration: BoxDecoration(
-        // Dekorasi untuk latar belakang kalender.
-        color: const Color(0xFFA7D3E8), // Warna latar belakang biru muda.
-        borderRadius: BorderRadius.circular(
-          16,
-        ), // Radius border sebesar 16 logical pixels.
+        color: const Color(0xFF89D2E4),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
-        // Menata elemen-elemen kalender secara vertikal.
         children: [
-          Row(
-            // Menata ikon navigasi bulan dan teks bulan secara horizontal.
-            mainAxisAlignment:
-                MainAxisAlignment
-                    .spaceBetween, // Mengatur jarak maksimum antara elemen.
-            children: const [
-              Icon(
-                Icons.chevron_left,
-              ), // Ikon panah kiri untuk navigasi ke bulan sebelumnya.
-              Text(
-                // Teks yang menampilkan bulan dan tahun.
-                'JANUARY, 2025',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold, // Membuat teks tebal.
-                  letterSpacing: 1.2, // Memberikan jarak antar huruf.
+          // Custom Header with Chevron Icons
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: const BoxDecoration(
+              color: Color(0xFF89D2E4),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Icon: chevron left
+                IconButton(
+                  icon: const Icon(Icons.chevron_left, color: Colors.black),
+                  onPressed: () {
+                    setState(() {
+                      _rangeFocusedDay = DateTime(
+                        _rangeFocusedDay.year,
+                        _rangeFocusedDay.month - 1,
+                      );
+                    });
+                  },
                 ),
-              ),
-              Icon(
-                Icons.chevron_right,
-              ), // Ikon panah kanan untuk navigasi ke bulan berikutnya.
-            ],
-          ),
-          const SizedBox(
-            height: 12,
-          ), // Memberikan jarak vertikal sebesar 12 logical pixels.
-          Table(
-            // Widget untuk menampilkan data dalam format tabel.
-            children: [
-              const TableRow(
-                // Baris pertama tabel untuk menampilkan nama hari.
-                children: [
-                  Text(
-                    'S',
-                    textAlign: TextAlign.center,
-                  ), // Teks "S" (Sunday) dengan alignment tengah.
-                  Text(
-                    'M',
-                    textAlign: TextAlign.center,
-                  ), // Teks "M" (Monday) dengan alignment tengah.
-                  Text(
-                    'T',
-                    textAlign: TextAlign.center,
-                  ), // Teks "T" (Tuesday) dengan alignment tengah.
-                  Text(
-                    'W',
-                    textAlign: TextAlign.center,
-                  ), // Teks "W" (Wednesday) dengan alignment tengah.
-                  Text(
-                    'T',
-                    textAlign: TextAlign.center,
-                  ), // Teks "T" (Thursday) dengan alignment tengah.
-                  Text(
-                    'F',
-                    textAlign: TextAlign.center,
-                  ), // Teks "F" (Friday) dengan alignment tengah.
-                  Text(
-                    'S',
-                    textAlign: TextAlign.center,
-                  ), // Teks "S" (Saturday) dengan alignment tengah.
-                ],
-              ),
-              for (
-                var week = 0;
-                week < 5;
-                week++
-              ) // Loop untuk membuat 5 baris minggu dalam kalender.
-                TableRow(
-                  // Baris untuk setiap minggu.
-                  children: List.generate(7, (index) {
-                    // Membuat 7 elemen (hari) dalam setiap baris.
-                    final day =
-                        week * 7 +
-                        index +
-                        1; // Menghitung nomor hari dalam bulan.
-                    if (day < 1 || day > 31) {
-                      return const SizedBox(); // Jika nomor hari di luar rentang 1-31, kembalikan widget kosong.
-                    }
-                    final isSelected =
-                        day == 5 ||
-                        day ==
-                            7; // Menentukan apakah hari ini adalah tanggal yang dipilih (contoh: tanggal 5 atau 7).
-                    return Padding(
-                      // Memberikan padding di sekitar setiap sel tanggal.
-                      padding: const EdgeInsets.all(4.0),
-                      child: Container(
-                        // Container untuk setiap sel tanggal.
-                        height: 36, // Mengatur tinggi sel tanggal.
-                        width: 36, // Mengatur lebar sel tanggal.
-                        decoration: BoxDecoration(
-                          // Dekorasi untuk latar belakang sel tanggal yang dipilih.
-                          shape: BoxShape.circle, // Membuat bentuk lingkaran.
-                          color:
-                              isSelected
-                                  ? Colors.white.withAlpha(
-                                    (255 * 0.5).round(),
-                                  ) // Warna putih dengan transparansi jika dipilih.
-                                  : Colors
-                                      .transparent, // Transparan jika tidak dipilih.
-                        ),
-                        child: Center(
-                          // Memusatkan nomor hari di dalam sel.
-                          child: Text(
-                            '$day',
-                            style: const TextStyle(
-                              fontSize: 14,
-                            ), // Style teks nomor hari.
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildLabeledField(String label, String hint, {int maxLines = 1}) {
-    // Metode untuk membangun field input dengan label.
-    return Padding(
-      // Memberikan padding di sekitar kolom label dan field input.
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Column(
-        // Menata label dan field input secara vertikal.
-        crossAxisAlignment:
-            CrossAxisAlignment.start, // Mengatur alignment horizontal ke kiri.
-        children: [
-          Text(
-            label, // Menampilkan label.
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-          ), // Style teks label.
-          const SizedBox(
-            height: 6,
-          ), // Memberikan jarak vertikal antara label dan field input.
-          TextFormField(
-            // Widget field input teks.
-            initialValue: hint, // Mengatur nilai awal field input.
-            maxLines:
-                maxLines, // Mengatur jumlah maksimum baris yang dapat ditampilkan.
-            decoration: InputDecoration(
-              // Dekorasi untuk field input.
-              filled: true, // Mengisi latar belakang field input.
-              fillColor: const Color(0xFFFFFADD), // Warna latar belakang krem.
-              border: OutlineInputBorder(
-                // Menambahkan border outline.
-                borderRadius: BorderRadius.circular(6), // Radius border.
-                borderSide: const BorderSide(
-                  color: Colors.black12,
-                ), // Warna border abu-abu sangat muda.
+                // Label Bulan / Tahun
+                GestureDetector(
+                  onTap: () async {
+                    final DateTime? picked = await showDatePicker(
+                      context: context,
+                      initialDate: _rangeFocusedDay,
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                      initialDatePickerMode: DatePickerMode.year,
+                    );
+                    if (picked != null) {
+                      setState(() {
+                        _rangeFocusedDay = picked;
+                      });
+                    }
+                  },
+                  child: Text(
+                    "${DateFormat.MMMM().format(_rangeFocusedDay)} / ${_rangeFocusedDay.year}",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+
+                // Icon: chevron right
+                IconButton(
+                  icon: const Icon(Icons.chevron_right, color: Colors.black),
+                  onPressed: () {
+                    setState(() {
+                      _rangeFocusedDay = DateTime(
+                        _rangeFocusedDay.year,
+                        _rangeFocusedDay.month + 1,
+                      );
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+
+          // TableCalendar
+          TableCalendar(
+            firstDay: DateTime.utc(2000, 1, 1),
+            lastDay: DateTime.utc(2100, 12, 31),
+            focusedDay: _rangeFocusedDay,
+            calendarFormat: _calendarFormat,
+            rangeStartDay: _rangeStart,
+            rangeEndDay: _rangeEnd,
+            rangeSelectionMode: _rangeSelectionMode,
+            onFormatChanged: (format) {
+              setState(() {
+                _calendarFormat = format;
+              });
+            },
+            onDaySelected: (selectedDay, focusedDay) {
+              setState(() {
+                if (isSameDay(_rangeStart, selectedDay) && _rangeEnd == null) {
+                  _rangeStart = null;
+                  _rangeEnd = null;
+                  _rangeSelectionMode = RangeSelectionMode.toggledOff;
+                  _dateController.text = '';
+                } else if (_rangeSelectionMode ==
+                        RangeSelectionMode.toggledOn &&
+                    _rangeStart != null &&
+                    _rangeEnd == null &&
+                    selectedDay.isAfter(_rangeStart!)) {
+                  _rangeEnd = selectedDay;
+                } else {
+                  _rangeStart = selectedDay;
+                  _rangeEnd = null;
+                  _rangeSelectionMode = RangeSelectionMode.toggledOn;
+                }
+
+                _rangeFocusedDay = focusedDay;
+
+                _dateController.text =
+                    (_rangeStart != null && _rangeEnd != null)
+                        ? "${_rangeStart!.day}/${_rangeStart!.month}/${_rangeStart!.year} - ${_rangeEnd!.day}/${_rangeEnd!.month}/${_rangeEnd!.year}"
+                        : (_rangeStart != null)
+                        ? "${_rangeStart!.day}/${_rangeStart!.month}/${_rangeStart!.year}"
+                        : "";
+              });
+            },
+            onPageChanged: (focusedDay) {
+              _rangeFocusedDay = focusedDay;
+            },
+            headerVisible: false,
+            daysOfWeekStyle: const DaysOfWeekStyle(
+              weekdayStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                color: Colors.black,
               ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 14,
-              ), // Padding di dalam field input.
+              weekendStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                color: Colors.black,
+              ),
+            ),
+            calendarStyle: const CalendarStyle(
+              outsideDaysVisible: false,
+              defaultTextStyle: TextStyle(color: Colors.black, fontSize: 16),
+              weekendTextStyle: TextStyle(color: Colors.black, fontSize: 16),
+              todayDecoration: BoxDecoration(
+                color: Color.fromARGB(255, 34, 102, 141),
+                shape: BoxShape.circle,
+              ),
+              todayTextStyle: TextStyle(color: Colors.white),
+              selectedTextStyle: TextStyle(color: Colors.black),
+              rangeHighlightColor: Color.fromARGB(132, 255, 255, 255),
+              rangeStartTextStyle: TextStyle(color: Colors.black),
+              rangeStartDecoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              rangeEndTextStyle: TextStyle(color: Colors.black),
+              rangeEndDecoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
             ),
           ),
         ],
@@ -296,46 +271,45 @@ class AddTourPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLabeledFieldWithIcon(
-    // Metode untuk membangun field input dengan label dan ikon.
+  Widget _buildLabeledField(
     String label,
-    String hint,
-    IconData icon,
-  ) {
+    IconData? icon,
+    TextEditingController? controller, {
+    int maxLines = 1,
+  }) {
     return Padding(
-      // Memberikan padding di sekitar kolom label dan field input.
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Column(
-        // Menata label dan field input secara vertikal.
-        crossAxisAlignment:
-            CrossAxisAlignment.start, // Mengatur alignment horizontal ke kiri.
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label, // Menampilkan label.
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-          ), // Style teks label.
-          const SizedBox(
-            height: 6,
-          ), // Memberikan jarak vertikal antara label dan field input.
           TextFormField(
-            // Widget field input teks.
-            initialValue: hint, // Mengatur nilai awal field input.
+            controller: controller,
+            style: const TextStyle(color: Color(0xFFFFFADD)),
+            cursorColor: Colors.white,
+            maxLines: maxLines,
             decoration: InputDecoration(
-              // Dekorasi untuk field input.
-              prefixIcon: Icon(icon), // Menambahkan ikon di awal field input.
-              filled: true, // Mengisi latar belakang field input.
-              fillColor: const Color(0xFFFFFADD), // Warna latar belakang krem.
-              border: OutlineInputBorder(
-                // Menambahkan border outline.
-                borderRadius: BorderRadius.circular(6), // Radius border.
-                borderSide: const BorderSide(
-                  color: Colors.black12,
-                ), // Warna border abu-abu sangat muda.
+              prefixIcon:
+                  icon != null ? Icon(icon, color: Color(0xFFFFFADD)) : null,
+              label: Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Color.fromARGB(255, 210, 210, 210),
+                ),
               ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 14,
-              ), // Padding di dalam field input.
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6),
+                borderSide: const BorderSide(color: Color(0xFFFFFADD)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6),
+                borderSide: const BorderSide(color: Color(0xFFFFFADD)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6),
+                borderSide: const BorderSide(color: Colors.white),
+              ),
             ),
           ),
         ],

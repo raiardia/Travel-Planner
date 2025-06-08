@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'add_tour_page.dart';
-import 'trip_model.dart';
-import 'add_trip_page.dart';
 import 'profil.dart';
 import 'mytrip_page.dart';
+import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final int initialTabIndex;
+  const HomePage({super.key, this.initialTabIndex = 0});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -16,22 +16,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   DateTime selectedDate = DateTime.now();
-  final List<Trip> _trips = [];
 
-  void _openAddTrip() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder:
-            (_) => AddTripPage(
-              onAddTrip: (trip) {
-                setState(() {
-                  _trips.add(trip);
-                });
-              },
-            ),
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialTabIndex;
   }
 
   void _changeMonth(int offset) {
@@ -59,42 +48,84 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages = [
+    final pages = [
       HomeContent(
         selectedDate: selectedDate,
         onChangeMonth: _changeMonth,
         openAddTourPage: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AddTourPage()),
+            MaterialPageRoute(builder: (context) => AddTourPage()),
           );
         },
       ),
-
       MytripPage(),
       ProfilePage(),
     ];
 
     return Scaffold(
-      body: IndexedStack(index: _selectedIndex, children: pages),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color.fromARGB(255, 34, 102, 141),
-        unselectedItemColor: Colors.grey,
-        elevation: 8,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.place), label: "My Trip"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+      extendBody: true,
+      body: pages[_selectedIndex],
+      bottomNavigationBar: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+        child: BottomNavigationBar(
+          backgroundColor: Colors.white,
+          unselectedItemColor: const Color.fromARGB(255, 34, 102, 141),
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          items: [
+            BottomNavigationBarItem(
+              icon:
+                  _selectedIndex == 0
+                      ? _buildSelectedIcon(Icons.home, 'Home')
+                      : const Icon(Icons.home_outlined, size: 30),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon:
+                  _selectedIndex == 1
+                      ? _buildSelectedIcon(Icons.place, 'My Trip')
+                      : const Icon(Icons.place_outlined, size: 30),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon:
+                  _selectedIndex == 2
+                      ? _buildSelectedIcon(Icons.person, 'Profile')
+                      : const Icon(Icons.person_outline, size: 30),
+              label: '',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSelectedIcon(IconData icon, String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 34, 102, 141),
+        borderRadius: BorderRadius.circular(23),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.white),
+          const SizedBox(width: 4),
+          Text(label, style: const TextStyle(color: Colors.white)),
         ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
       ),
     );
   }
 }
 
-class HomeContent extends StatelessWidget {
+class HomeContent extends StatefulWidget {
   final DateTime selectedDate;
   final void Function(int) onChangeMonth;
   final VoidCallback openAddTourPage;
@@ -105,6 +136,14 @@ class HomeContent extends StatelessWidget {
     required this.onChangeMonth,
     required this.openAddTourPage,
   });
+
+  @override
+  State<HomeContent> createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<HomeContent> {
+  CalendarFormat _calendarFormat = CalendarFormat.month;
+  DateTime _focusedDay = DateTime.now();
 
   String _getGreeting() {
     final hour = DateTime.now().hour;
@@ -131,62 +170,78 @@ class HomeContent extends StatelessWidget {
     );
   }
 
-  Widget _buildSimpleCalendar(DateTime date) {
-    final daysInMonth = DateUtils.getDaysInMonth(date.year, date.month);
-    final firstDay = DateTime(date.year, date.month, 1).weekday;
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: daysInMonth + firstDay - 1,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 7,
+  Widget _buildTableCalendar(DateTime selectedDate) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF89D2E4),
+        borderRadius: BorderRadius.circular(16),
       ),
-      itemBuilder: (context, index) {
-        if (index < firstDay - 1) {
-          return const SizedBox();
-        }
-
-        int day = index - firstDay + 2;
-        bool isToday =
-            day == DateTime.now().day &&
-            date.month == DateTime.now().month &&
-            date.year == DateTime.now().year;
-
-        return Container(
-          margin: const EdgeInsets.all(4),
+      child: TableCalendar(
+        firstDay: DateTime.utc(2000, 1, 1),
+        lastDay: DateTime.utc(2100, 12, 31),
+        focusedDay: _focusedDay,
+        calendarFormat: _calendarFormat,
+        onFormatChanged: (format) {
+          setState(() {
+            _calendarFormat = format;
+          });
+        },
+        onPageChanged: (focusedDay) {
+          _focusedDay = focusedDay;
+        },
+        headerStyle: HeaderStyle(
+          titleCentered: true,
+          formatButtonVisible: false,
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+          ),
+          leftChevronIcon: Icon(Icons.chevron_left, color: Colors.black),
+          rightChevronIcon: Icon(Icons.chevron_right, color: Colors.black),
           decoration: BoxDecoration(
-            color: isToday ? const Color(0xFFf4d35e) : const Color(0xFFFFFADD),
-            borderRadius: BorderRadius.circular(8),
-            boxShadow:
-                isToday
-                    ? [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ]
-                    : [],
+            color: Color(0xFF89D2E4),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
           ),
-          child: Center(
-            child: Text(
-              '$day',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: isToday ? Colors.black : Colors.black87,
-              ),
-            ),
+          // Tambahkan custom builder untuk title
+          titleTextFormatter:
+              (date, locale) => DateFormat('MMMM / y', locale).format(date),
+        ),
+
+        daysOfWeekStyle: const DaysOfWeekStyle(
+          weekdayStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
+            color: Colors.black,
           ),
-        );
-      },
+          weekendStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
+            color: Colors.black,
+          ),
+        ),
+        calendarStyle: const CalendarStyle(
+          outsideDaysVisible: false,
+          defaultTextStyle: TextStyle(color: Colors.black, fontSize: 16),
+          weekendTextStyle: TextStyle(color: Colors.black, fontSize: 16),
+          todayDecoration: BoxDecoration(
+            color: Color.fromARGB(255, 34, 102, 141),
+            shape: BoxShape.circle,
+          ),
+          todayTextStyle: TextStyle(color: Colors.white),
+          selectedDecoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+          ),
+          selectedTextStyle: TextStyle(color: Colors.black),
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     String greeting = _getGreeting();
-    String monthYear = DateFormat('MMMM yyyy').format(selectedDate);
 
     return Container(
       color: const Color.fromARGB(255, 34, 102, 141),
@@ -194,52 +249,34 @@ class HomeContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 50), // Jarak atas supaya tidak terlalu mepet
-          Text(
-            '$greeting, Rai 👋',
-            style: const TextStyle(
-              fontSize: 22,
-              color: Color(0xFFFFFADD),
-              fontWeight: FontWeight.bold,
+          Padding(
+            padding: const EdgeInsets.only(top: 20, bottom: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Image.asset('assets/images/Frame 1.png', height: 60),
+                Text(
+                  '$greeting, Rai',
+                  style: const TextStyle(
+                    fontSize: 22,
+                    color: Color(0xFFFFFADD),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 8),
           const Divider(color: Colors.white54, thickness: 1, height: 1),
-          const SizedBox(height: 30),
-          _buildUpcomingTripCard(),
-          const Divider(thickness: 1, color: Colors.grey, height: 32),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                monthYear,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFFFFFADD),
-                ),
-              ),
-              Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.chevron_left),
-                    color: const Color(0xFFFFFADD),
-                    tooltip: 'Previous Month',
-                    onPressed: () => onChangeMonth(-1),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.chevron_right),
-                    color: const Color(0xFFFFFADD),
-                    tooltip: 'Next Month',
-                    onPressed: () => onChangeMonth(1),
-                  ),
-                ],
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.only(top: 20, bottom: 6),
+            child: _buildUpcomingTripCard(),
           ),
-          const SizedBox(height: 10),
-          Expanded(child: _buildSimpleCalendar(selectedDate)),
-          const SizedBox(height: 10),
+          const Divider(thickness: 1, color: Colors.grey, height: 32),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: _buildTableCalendar(widget.selectedDate),
+          ),
+          const SizedBox(height: 20),
           Align(
             alignment: Alignment.bottomRight,
             child: ElevatedButton.icon(
@@ -250,11 +287,11 @@ class HomeContent extends StatelessWidget {
                   vertical: 8,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  side: const BorderSide(color: Colors.white24),
+                  borderRadius: BorderRadius.circular(20),
+                  side: const BorderSide(color: Color(0xFFFFFADD)),
                 ),
               ),
-              onPressed: openAddTourPage,
+              onPressed: widget.openAddTourPage,
               icon: const Icon(Icons.add, size: 18, color: Color(0xFFFFFADD)),
               label: const Text(
                 'Add Tour',
