@@ -79,8 +79,10 @@ class DreamDestinationPage extends StatelessWidget {
           if (index == 0) {
             Navigator.pushReplacementNamed(context, '/home');
           } else if (index == 1) {
-            // Do nothing, stay here
+            Navigator.pushReplacementNamed(context, '/addTour');
           } else if (index == 2) {
+            Navigator.pushReplacementNamed(context, '/mytrip');
+          } else if (index == 3) {
             Navigator.pushReplacementNamed(context, '/profil');
           }
         },

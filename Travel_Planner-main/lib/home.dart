@@ -8,6 +8,7 @@ import 'dream_destination_page.dart';
 
 class HomePage extends StatefulWidget {
   final int initialTabIndex;
+
   const HomePage({super.key, this.initialTabIndex = 0});
 
   @override
@@ -47,12 +48,11 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-List<Map<String, dynamic>> tripList = [];
+  List<Map<String, dynamic>> tripList = [];
 
   @override
   Widget build(BuildContext context) {
     final pages = [
-      
       HomeContent(
         selectedDate: selectedDate,
         onChangeMonth: _changeMonth,
@@ -68,11 +68,10 @@ List<Map<String, dynamic>> tripList = [];
             });
           }
         },
-
       ),
-      DreamDestinationPage(),
       MytripPage(),
       ProfilePage(),
+      DreamDestinationPage(),
     ];
 
     return Scaffold(

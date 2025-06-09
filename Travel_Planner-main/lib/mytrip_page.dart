@@ -30,103 +30,118 @@ class _MytripPageState extends State<MytripPage> {
     return Scaffold(
       backgroundColor: const Color(0xFF1F628E),
       appBar: AppBar(
-        title: const Text('My Trip'),
-        titleTextStyle: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-        centerTitle: true,
         backgroundColor: const Color(0xFF1F628E),
         elevation: 0,
+        toolbarHeight: 80, // 
+        title: const Padding(
+          padding: EdgeInsets.only(top: 12.0), // 
+          child: Text(
+            'My Trip',
+            style: TextStyle(
+              fontSize: 26, // 
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        centerTitle: true,
       ),
       body: ListView.builder(
         itemCount: tripList.length,
         padding: const EdgeInsets.all(16),
         itemBuilder: (context, index) {
           final trip = tripList[index];
-
-          // Gambar lokal dari assets
+          
           final imageAsset =
               index % 2 == 0
                   ? 'assets/images/mytrip_1.jpg'
                   : 'assets/images/mytrip_2.jpg';
 
-          return Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(
-              color: const Color(0xFF86CBE9),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    bottomLeft: Radius.circular(16),
+          return GestureDetector(
+            onTap: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (_) => EditTourPage(trip: trip)),
+              // );
+            },
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF86CBE9),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      bottomLeft: Radius.circular(16),
+                    ),
+                    child: Image.asset(
+                      imageAsset,
+                      width: 110,
+                      height: 110,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                  child: Image.asset(
-                    imageAsset,
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            '${formatDuration(trip.dateRange.duration)}   •   ${formatNights(trip.dateRange)}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                              overflow: TextOverflow.ellipsis,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(14),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
                             ),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          formatDateRange(trip.dateRange),
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          trip.title,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            const Icon(Icons.location_on, size: 14),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                trip.location,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              '${formatDuration(trip.dateRange.duration)}   •   ${formatNights(trip.dateRange)}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            formatDateRange(trip.dateRange),
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            trip.title,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              const Icon(Icons.location_on, size: 16),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  trip.location,
+                                  style: const TextStyle(fontSize: 13),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
