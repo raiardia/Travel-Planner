@@ -46,18 +46,28 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+List<Map<String, dynamic>> tripList = [];
+
   @override
   Widget build(BuildContext context) {
     final pages = [
+      
       HomeContent(
         selectedDate: selectedDate,
         onChangeMonth: _changeMonth,
-        openAddTourPage: () {
-          Navigator.push(
+        openAddTourPage: () async {
+          final newTrip = await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AddTourPage()),
           );
+
+          if (newTrip != null) {
+            setState(() {
+              tripList.add(newTrip);
+            });
+          }
         },
+
       ),
       MytripPage(),
       ProfilePage(),

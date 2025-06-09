@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:project_travelplanner/home.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import 'trip_model.dart';
+import 'trip_data.dart';
+import 'mytrip_page.dart';
 
 class AddTourPage extends StatefulWidget {
-  const AddTourPage({super.key});
+  final Function(Trip)? onAddTour;
+
+  const AddTourPage({super.key, this.onAddTour});
 
   @override
   State<AddTourPage> createState() => _AddTourPageState();
@@ -80,13 +85,36 @@ class _AddTourPageState extends State<AddTourPage> {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (builder) => HomePage(initialTabIndex: 1),
-                      ),
-                      (route) => false,
-                    );
+                    if (_rangeStart != null && _rangeEnd != null) {
+                      final newTrip = Trip(
+                        title: _tourAboutController.text,
+                        location: _locationController.text,
+                        remarks: _remarksController.text,
+                        dateRange: DateTimeRange(
+                          start: _rangeStart!,
+                          end: _rangeEnd!,
+                        ),
+                      );
+
+                      // Tambahkan ke tripList
+                      tripList.add(newTrip);
+
+                      // Kembali ke halaman MyTrip
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (builder) => HomePage(initialTabIndex: 1),
+                        ),
+                        (route) => false,
+                      );
+                    } else {
+                      // Tampilkan snackbar kalau belum pilih tanggal
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Please select a date range first!'),
+                        ),
+                      );
+                    }
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

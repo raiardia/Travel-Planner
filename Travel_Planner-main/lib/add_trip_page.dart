@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart'; // Mengimpor library Material Design untuk membangun UI aplikasi Flutter.
 import 'package:intl/intl.dart'; // Mengimpor library `intl` untuk memformat tanggal.
 import 'trip_model.dart'; // Mengimpor file `trip_model.dart` yang berisi definisi kelas `Trip`.
+import 'trip_data.dart'; // Mengimpor file `trip_data.dart` yang berisi data perjalanan (list dari objek `Trip`).
+import 'mytrip_page.dart'; // Mengimpor file `mytrip_page.dart` yang berisi halaman untuk menampilkan daftar perjalanan yang telah dibuat.
 
 class AddTripPage extends StatefulWidget {
   // Mendefinisikan kelas `AddTripPage`, yang merupakan widget stateful (memiliki state internal yang dapat berubah).
