@@ -33,9 +33,9 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String name = "Amy Young";
+  String name = "Raihengan";
   String phone = "+98 1245560090";
-  String email = "amyyoung@random.com";
+  String email = "konoha@gmail.com";
   File? _imageFile;
 
   void _openEditPage() async {

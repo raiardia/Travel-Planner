@@ -4,6 +4,7 @@ import 'profil.dart';
 import 'mytrip_page.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import 'dream_destination_page.dart';
 
 class HomePage extends StatefulWidget {
   final int initialTabIndex;
@@ -59,6 +60,7 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ),
+      DreamDestinationPage(),
       MytripPage(),
       ProfilePage(),
     ];
