@@ -37,7 +37,7 @@ class DreamDestinationPage extends StatelessWidget {
                   child: Column(
                     children: [
                       SizedBox(
-                        height: 250,
+                        height: 650,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
                           child: Image.asset(
