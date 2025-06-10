@@ -69,9 +69,9 @@ class _HomePageState extends State<HomePage> {
           }
         },
       ),
+      DreamDestinationPage(),
       MytripPage(),
       ProfilePage(),
-      DreamDestinationPage(),
     ];
 
     return Scaffold(
@@ -92,21 +92,28 @@ class _HomePageState extends State<HomePage> {
               icon:
                   _selectedIndex == 0
                       ? _buildSelectedIcon(Icons.home, 'Home')
-                      : const Icon(Icons.home_outlined, size: 30),
+                      : const Icon(Icons.home_outlined, size: 27),
               label: '',
             ),
             BottomNavigationBarItem(
               icon:
                   _selectedIndex == 1
-                      ? _buildSelectedIcon(Icons.place, 'My Trip')
-                      : const Icon(Icons.place_outlined, size: 30),
+                      ? _buildSelectedIcon(Icons.public, 'Destination')
+                      : const Icon(Icons.public, size: 27),
               label: '',
             ),
             BottomNavigationBarItem(
               icon:
                   _selectedIndex == 2
+                      ? _buildSelectedIcon(Icons.place, 'My Trip')
+                      : const Icon(Icons.place_outlined, size: 27),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon:
+                  _selectedIndex == 3
                       ? _buildSelectedIcon(Icons.person, 'Profile')
-                      : const Icon(Icons.person_outline, size: 30),
+                      : const Icon(Icons.person_outline, size: 27),
               label: '',
             ),
           ],
