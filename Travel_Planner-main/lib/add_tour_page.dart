@@ -103,7 +103,7 @@ class _AddTourPageState extends State<AddTourPage> {
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                          builder: (builder) => HomePage(initialTabIndex: 1,),
+                          builder: (builder) => HomePage(initialTabIndex: 2),
                         ),
                         (route) => false,
                       );
