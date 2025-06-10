@@ -36,7 +36,8 @@ class DreamDestinationPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Column(
                     children: [
-                      Expanded(
+                      SizedBox(
+                        height: 650,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
                           child: Image.asset(
@@ -46,6 +47,7 @@ class DreamDestinationPage extends StatelessWidget {
                           ),
                         ),
                       ),
+
                       SizedBox(height: 10),
                       Text(
                         item['name']!,
