@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_travelplanner/trip_data.dart';
 import 'add_tour_page.dart';
 import 'profil.dart';
 import 'mytrip_page.dart';
@@ -126,7 +127,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildSelectedIcon(IconData icon, String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
       decoration: BoxDecoration(
         color: const Color.fromARGB(255, 34, 102, 141),
         borderRadius: BorderRadius.circular(23),
@@ -136,7 +137,10 @@ class _HomePageState extends State<HomePage> {
         children: [
           Icon(icon, color: Colors.white),
           const SizedBox(width: 4),
-          Text(label, style: const TextStyle(color: Colors.white)),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white, fontSize: 9.6),
+          ),
         ],
       ),
     );
@@ -175,85 +179,213 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   Widget _buildUpcomingTripCard() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        leading: const Icon(Icons.flight_takeoff, color: Colors.teal),
-        title: const Text("Bali Getaway"),
-        subtitle: const Text("12 - 15 April 2025"),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(left: 8.0, bottom: 5),
+          child: Text(
+            "Upcoming Trip",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 8,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: ListTile(
+              contentPadding: const EdgeInsets.all(16),
+              leading: const Icon(Icons.flight_takeoff, color: Colors.teal),
+              title: const Text(
+                "Bali Getaway",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              subtitle: const Text("12 - 15 April 2025"),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () {
+                // Bisa arahkan ke detail trip jika dibutuhkan
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildTableCalendar(DateTime selectedDate) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF89D2E4),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: TableCalendar(
-        firstDay: DateTime.utc(2000, 1, 1),
-        lastDay: DateTime.utc(2100, 12, 31),
-        focusedDay: _focusedDay,
-        calendarFormat: _calendarFormat,
-        onFormatChanged: (format) {
-          setState(() {
-            _calendarFormat = format;
-          });
-        },
-        onPageChanged: (focusedDay) {
-          _focusedDay = focusedDay;
-        },
-        headerStyle: HeaderStyle(
-          titleCentered: true,
-          formatButtonVisible: false,
-          titleTextStyle: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(left: 8.0, bottom: 5),
+          child: Text(
+            "Trip Calendar",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
-          leftChevronIcon: Icon(Icons.chevron_left, color: Colors.black),
-          rightChevronIcon: Icon(Icons.chevron_right, color: Colors.black),
-          decoration: BoxDecoration(
-            color: Color(0xFF89D2E4),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-          ),
-          // Tambahkan custom builder untuk title
-          titleTextFormatter:
-              (date, locale) => DateFormat('MMMM / y', locale).format(date),
         ),
+        SizedBox(
+          height: 350,
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFF89D2E4),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 8,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: TableCalendar(
+              firstDay: DateTime.utc(2000, 1, 1),
+              lastDay: DateTime.utc(2100, 12, 31),
+              focusedDay: _focusedDay,
+              calendarFormat: _calendarFormat,
 
-        daysOfWeekStyle: const DaysOfWeekStyle(
-          weekdayStyle: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 13,
-            color: Colors.black,
-          ),
-          weekendStyle: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 13,
-            color: Colors.black,
+              // Tambahkan ini:
+              eventLoader: (day) {
+                return tripList
+                    .where((trip) {
+                      return !day.isBefore(trip.dateRange.start) &&
+                          !day.isAfter(trip.dateRange.end);
+                    })
+                    .map((trip) => trip.location)
+                    .toList();
+              },
+
+              calendarBuilders: CalendarBuilders(
+                markerBuilder: (context, date, events) {
+                  if (events.isEmpty) return const SizedBox();
+
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      top: 30,
+                    ), // posisi bawah angka tanggal
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children:
+                          events.map((e) {
+                            return Container(
+                              // Gunakan constraints agar tidak melebihi lebar sel
+                              constraints: const BoxConstraints(
+                                maxWidth: 50, // Sesuaikan jika terlalu sempit
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 2,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.card_travel,
+                                    size: 10,
+                                    color: Colors.black,
+                                  ),
+                                  const SizedBox(width: 3),
+                                  Flexible(
+                                    child: Text(
+                                      e.toString(),
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.black,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                    ),
+                  );
+                },
+              ),
+
+              onFormatChanged: (format) {
+                setState(() {
+                  _calendarFormat = format;
+                });
+              },
+              onPageChanged: (focusedDay) {
+                _focusedDay = focusedDay;
+              },
+              headerStyle: HeaderStyle(
+                titleCentered: true,
+                formatButtonVisible: false,
+                titleTextStyle: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+                leftChevronIcon: const Icon(
+                  Icons.chevron_left,
+                  color: Colors.black,
+                ),
+                rightChevronIcon: const Icon(
+                  Icons.chevron_right,
+                  color: Colors.black,
+                ),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF89D2E4),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                ),
+                titleTextFormatter:
+                    (date, locale) =>
+                        DateFormat('MMMM / y', locale).format(date),
+              ),
+              daysOfWeekStyle: const DaysOfWeekStyle(
+                weekdayStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                  color: Colors.black,
+                ),
+                weekendStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                  color: Colors.black,
+                ),
+              ),
+              calendarStyle: const CalendarStyle(
+                outsideDaysVisible: false,
+                defaultTextStyle: TextStyle(color: Colors.black, fontSize: 16),
+                weekendTextStyle: TextStyle(color: Colors.black, fontSize: 16),
+                todayDecoration: BoxDecoration(
+                  color: Color.fromARGB(255, 34, 102, 141),
+                  shape: BoxShape.circle,
+                ),
+                todayTextStyle: TextStyle(color: Colors.white),
+                selectedDecoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                selectedTextStyle: TextStyle(color: Colors.black),
+              ),
+            ),
           ),
         ),
-        calendarStyle: const CalendarStyle(
-          outsideDaysVisible: false,
-          defaultTextStyle: TextStyle(color: Colors.black, fontSize: 16),
-          weekendTextStyle: TextStyle(color: Colors.black, fontSize: 16),
-          todayDecoration: BoxDecoration(
-            color: Color.fromARGB(255, 34, 102, 141),
-            shape: BoxShape.circle,
-          ),
-          todayTextStyle: TextStyle(color: Colors.white),
-          selectedDecoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-          ),
-          selectedTextStyle: TextStyle(color: Colors.black),
-        ),
-      ),
+      ],
     );
   }
 
@@ -289,12 +421,12 @@ class _HomeContentState extends State<HomeContent> {
             padding: const EdgeInsets.only(top: 20, bottom: 6),
             child: _buildUpcomingTripCard(),
           ),
-          const Divider(thickness: 1, color: Colors.grey, height: 32),
+          const Divider(thickness: 1, color: Colors.white54, height: 32),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
             child: _buildTableCalendar(widget.selectedDate),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 5),
           Align(
             alignment: Alignment.bottomRight,
             child: ElevatedButton.icon(

@@ -11,7 +11,7 @@ class DreamDestinationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFEF8DC),
+      backgroundColor: const Color.fromARGB(255, 34, 102, 141),
       body: Column(
         children: [
           SizedBox(height: 60),
@@ -21,11 +21,11 @@ class DreamDestinationPage extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF225B75),
+                color: Colors.white,
               ),
             ),
           ),
-          SizedBox(height: 30),
+          SizedBox(height: 25),
           Expanded(
             child: PageView.builder(
               itemCount: destinations.length,
@@ -37,7 +37,7 @@ class DreamDestinationPage extends StatelessWidget {
                   child: Column(
                     children: [
                       SizedBox(
-                        height: 650,
+                        height: 600,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
                           child: Image.asset(
@@ -54,7 +54,7 @@ class DreamDestinationPage extends StatelessWidget {
                         style: GoogleFonts.poppins(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
-                          color: Color(0xFF225B75),
+                          color: Colors.white,
                         ),
                       ),
                     ],

@@ -81,7 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(
-                          top: 33,
+                          top: 49,
                           left: 20,
                           right: 1,
                         ),
