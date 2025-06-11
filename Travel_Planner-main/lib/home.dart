@@ -49,8 +49,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  List<Map<String, dynamic>> tripList = [];
-
   @override
   Widget build(BuildContext context) {
     final pages = [
@@ -179,6 +177,18 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   Widget _buildUpcomingTripCard() {
+    final now = DateTime.now();
+    final upcomingTrips =
+        tripList.where((trip) => trip.dateRange.start.isAfter(now)).toList();
+
+    // Sort berdasarkan tanggal paling awal
+    upcomingTrips.sort(
+      (a, b) => a.dateRange.start.compareTo(b.dateRange.start),
+    );
+
+    final bool hasUpcoming = upcomingTrips.isNotEmpty;
+    final nearestTrip = hasUpcoming ? upcomingTrips.first : null;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -212,15 +222,34 @@ class _HomeContentState extends State<HomeContent> {
             child: ListTile(
               contentPadding: const EdgeInsets.all(16),
               leading: const Icon(Icons.flight_takeoff, color: Colors.teal),
-              title: const Text(
-                "Bali Getaway",
-                style: TextStyle(fontWeight: FontWeight.w600),
+              title: Text(
+                hasUpcoming
+                    ? nearestTrip!.location
+                    : "No upcoming trips found.",
+                style: const TextStyle(fontWeight: FontWeight.w600),
               ),
-              subtitle: const Text("12 - 15 April 2025"),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () {
-                // Bisa arahkan ke detail trip jika dibutuhkan
-              },
+              subtitle:
+                  hasUpcoming
+                      ? Text(
+                        DateFormat(
+                              'd MMMM y',
+                            ).format(nearestTrip!.dateRange.start) +
+                            ' - ' +
+                            DateFormat(
+                              'd MMMM y',
+                            ).format(nearestTrip.dateRange.end),
+                      )
+                      : null,
+              trailing:
+                  hasUpcoming
+                      ? const Icon(Icons.arrow_forward_ios, size: 16)
+                      : null,
+              onTap:
+                  hasUpcoming
+                      ? () {
+                        // Arahkan ke detail trip jika tersedia
+                      }
+                      : null,
             ),
           ),
         ),
@@ -244,7 +273,6 @@ class _HomeContentState extends State<HomeContent> {
           ),
         ),
         SizedBox(
-          height: 350,
           child: Container(
             decoration: BoxDecoration(
               color: const Color(0xFF89D2E4),
