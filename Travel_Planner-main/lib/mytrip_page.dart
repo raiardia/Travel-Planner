@@ -53,10 +53,16 @@ class _MytripPageState extends State<MytripPage> {
         itemBuilder: (context, index) {
           final trip = tripList[index];
 
-          final imageAsset =
-              index % 2 == 0
-                  ? 'assets/images/mytrip_1.jpg'
-                  : 'assets/images/mytrip_2.jpg';
+        final List<String> tripImages = [
+            'assets/images/mytrip_1.jpg',
+            'assets/images/mytrip_2.jpg',
+            'assets/images/mytrip_3.jpg',
+            'assets/images/mytrip_4.jpg',
+            'assets/images/mytrip_5.jpg', 
+            'assets/images/mytrip_6.jpg',
+          ];
+
+          final imageAsset = tripImages[index % tripImages.length];
 
           return GestureDetector(
             onTap: () {
