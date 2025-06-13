@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:project_travelplanner/add_tour_page.dart';
 import 'trip_model.dart';
 import 'trip_data.dart';
 import 'package:intl/intl.dart';
 import 'edit_tour_page.dart';
+import 'tour_detail_page.dart';
 
 class MytripPage extends StatefulWidget {
   const MytripPage({super.key});
@@ -47,11 +49,34 @@ class _MytripPageState extends State<MytripPage> {
         ),
         centerTitle: true,
       ),
-      body: ListView.builder(
-        itemCount: tripList.length,
-        padding: const EdgeInsets.all(16),
-        itemBuilder: (context, index) {
-          final trip = tripList[index];
+      body: tripList.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.travel_explore,
+                    size: 60,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'No trips available.\nCreate your first trip now!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+              ),
+            )
+          : ListView.builder(
+              itemCount: tripList.length,
+              padding: const EdgeInsets.all(16),
+              itemBuilder: (context, index) {
+                final trip = tripList[index];
 
         final List<String> tripImages = [
             'assets/images/mytrip_1.jpg',
@@ -66,14 +91,17 @@ class _MytripPageState extends State<MytripPage> {
 
           return GestureDetector(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (_) =>
-                          EditTourPage(trip: tripList[index], tripIndex: index),
-                ),
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder:
+                    (_) => TourDetailSheet(
+                      trip: tripList[index],
+                      tripIndex: index,
+                    ),
               );
+
             },
 
             child: Container(
