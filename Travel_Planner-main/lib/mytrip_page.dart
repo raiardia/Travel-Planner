@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'trip_model.dart';
 import 'trip_data.dart';
 import 'package:intl/intl.dart';
+import 'edit_tour_page.dart';
 
 class MytripPage extends StatefulWidget {
   const MytripPage({super.key});
@@ -59,8 +60,17 @@ class _MytripPageState extends State<MytripPage> {
 
           return GestureDetector(
             onTap: () {
-              // Bisa tambahkan navigasi ke detail trip di sini
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => EditTourPage(
+                    trip: tripList[index],
+                    tripIndex: index,
+                  ),
+                ),
+              );
             },
+
             child: Container(
               margin: const EdgeInsets.only(bottom: 16),
               height: 140,
