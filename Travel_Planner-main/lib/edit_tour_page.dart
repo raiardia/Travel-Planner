@@ -335,7 +335,7 @@ class _EditTourPageState extends State<EditTourPage> {
       ), // semi-transparent background
       builder: (BuildContext context) {
         return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3), // blur effect
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5), // blur effect
           child: AlertDialog(
             backgroundColor: const Color(0xFFFFFADD), // cream color
             shape: RoundedRectangleBorder(
