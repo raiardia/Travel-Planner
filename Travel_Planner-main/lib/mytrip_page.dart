@@ -63,17 +63,16 @@ class _MytripPageState extends State<MytripPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => EditTourPage(
-                    trip: tripList[index],
-                    tripIndex: index,
-                  ),
+                  builder:
+                      (_) =>
+                          EditTourPage(trip: tripList[index], tripIndex: index),
                 ),
               );
             },
 
             child: Container(
               margin: const EdgeInsets.only(bottom: 16),
-              height: 140,
+              height: 138,
               decoration: BoxDecoration(
                 color: const Color(0xFF86CBE9),
                 borderRadius: BorderRadius.circular(20),
@@ -96,7 +95,7 @@ class _MytripPageState extends State<MytripPage> {
                     ),
                     child: Image.asset(
                       imageAsset,
-                      width: 140,
+                      width: 138,
                       height: double.infinity,
                       fit: BoxFit.cover,
                     ),
@@ -143,9 +142,9 @@ class _MytripPageState extends State<MytripPage> {
                           Text(
                             trip.title,
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 17,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF1F628E),
+                              color: Colors.black,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -159,12 +158,12 @@ class _MytripPageState extends State<MytripPage> {
                                 size: 16,
                                 color: Colors.black54,
                               ),
-                              const SizedBox(width: 4),
+                              const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
                                   trip.location,
                                   style: const TextStyle(
-                                    fontSize: 13,
+                                    fontSize: 15,
                                     color: Colors.black87,
                                   ),
                                   overflow: TextOverflow.ellipsis,

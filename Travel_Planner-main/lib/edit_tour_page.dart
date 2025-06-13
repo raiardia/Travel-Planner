@@ -4,6 +4,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'trip_model.dart';
 import 'trip_data.dart';
 import 'home.dart';
+import 'dart:ui'; // For ImageFilter
 
 class EditTourPage extends StatefulWidget {
   final Trip trip;
@@ -329,33 +330,49 @@ class _EditTourPageState extends State<EditTourPage> {
   void _showDeleteConfirmationDialog() {
     showDialog(
       context: context,
+      barrierColor: Colors.black.withOpacity(
+        0.4,
+      ), // semi-transparent background
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirm Deletion'),
-          content: const Text('Are you sure you want to delete this trip?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
-              },
-              child: const Text('Cancel'),
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3), // blur effect
+          child: AlertDialog(
+            backgroundColor: const Color(0xFFFFFADD), // cream color
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  tripList.removeAt(widget.tripIndex);
-                });
+            title: const Text(
+              'Are you sure?',
+              style: TextStyle(color: Colors.black),
+            ),
+            content: const Text(
+              'Do you want to delete the tour details?',
+              style: TextStyle(color: Colors.black87),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close dialog
+                },
+                child: const Text('No', style: TextStyle(color: Colors.black)),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    tripList.removeAt(widget.tripIndex);
+                  });
 
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (context) => HomePage(initialTabIndex: 2),
-                  ),
-                  (route) => false,
-                );
-              },
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
-            ),
-          ],
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => HomePage(initialTabIndex: 2),
+                    ),
+                    (route) => false,
+                  );
+                },
+                child: const Text('Yes', style: TextStyle(color: Colors.red)),
+              ),
+            ],
+          ),
         );
       },
     );
