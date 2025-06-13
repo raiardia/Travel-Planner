@@ -31,7 +31,6 @@ class _EditTourPageState extends State<EditTourPage> {
   void initState() {
     super.initState();
 
-    // Isi data awal dari trip yang diedit
     _rangeStart = widget.trip.dateRange.start;
     _rangeEnd = widget.trip.dateRange.end;
     _rangeFocusedDay = _rangeStart!;
@@ -97,7 +96,6 @@ class _EditTourPageState extends State<EditTourPage> {
       ),
       child: Column(
         children: [
-          // Header
           Container(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             child: Row(
@@ -213,11 +211,14 @@ class _EditTourPageState extends State<EditTourPage> {
                 shape: BoxShape.circle,
               ),
               todayTextStyle: TextStyle(color: Colors.white),
+              selectedTextStyle: TextStyle(color: Colors.black),
               rangeHighlightColor: Color.fromARGB(132, 255, 255, 255),
+              rangeStartTextStyle: TextStyle(color: Colors.black),
               rangeStartDecoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
               ),
+              rangeEndTextStyle: TextStyle(color: Colors.black),
               rangeEndDecoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
@@ -241,6 +242,7 @@ class _EditTourPageState extends State<EditTourPage> {
         controller: controller,
         readOnly: label == 'Date',
         maxLines: maxLines,
+        cursorColor: Colors.white,
         style: const TextStyle(color: Color(0xFFFFFADD)),
         decoration: InputDecoration(
           prefixIcon:
@@ -271,7 +273,6 @@ class _EditTourPageState extends State<EditTourPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        // Tombol Update
         ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFFFFC700),
@@ -291,7 +292,6 @@ class _EditTourPageState extends State<EditTourPage> {
                 dateRange: DateTimeRange(start: _rangeStart!, end: _rangeEnd!),
               );
 
-              // Update trip di list
               tripList[widget.tripIndex] = updatedTrip;
 
               Navigator.pushAndRemoveUntil(
@@ -308,8 +308,6 @@ class _EditTourPageState extends State<EditTourPage> {
             }
           },
         ),
-
-        // Tombol Delete
         ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.redAccent,
@@ -321,18 +319,45 @@ class _EditTourPageState extends State<EditTourPage> {
           icon: const Icon(Icons.delete),
           label: const Text('Delete'),
           onPressed: () {
-            tripList.removeAt(widget.tripIndex);
-
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(initialTabIndex: 2),
-              ),
-              (route) => false,
-            );
+            _showDeleteConfirmationDialog();
           },
         ),
       ],
+    );
+  }
+
+  void _showDeleteConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Deletion'),
+          content: const Text('Are you sure you want to delete this trip?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  tripList.removeAt(widget.tripIndex);
+                });
+
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => HomePage(initialTabIndex: 2),
+                  ),
+                  (route) => false,
+                );
+              },
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
     );
   }
 }
