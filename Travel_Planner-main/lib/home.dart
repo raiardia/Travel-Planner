@@ -6,6 +6,8 @@ import 'mytrip_page.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'dream_destination_page.dart';
+import 'trip_data.dart';
+import 'tour_detail_page.dart';
 
 class HomePage extends StatefulWidget {
   final int initialTabIndex;
@@ -247,7 +249,16 @@ class _HomeContentState extends State<HomeContent> {
               onTap:
                   hasUpcoming
                       ? () {
-                        // Arahkan ke detail trip jika tersedia
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder:
+                              (_) => TourDetailSheet(
+                                trip: nearestTrip!,
+                                tripIndex: tripList.indexOf(nearestTrip),
+                              ),
+                        );
                       }
                       : null,
             ),
