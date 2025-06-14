@@ -183,13 +183,11 @@ class _HomeContentState extends State<HomeContent> {
     final upcomingTrips =
         tripList.where((trip) => trip.dateRange.start.isAfter(now)).toList();
 
-    // Sort berdasarkan tanggal paling awal
     upcomingTrips.sort(
       (a, b) => a.dateRange.start.compareTo(b.dateRange.start),
     );
 
     final bool hasUpcoming = upcomingTrips.isNotEmpty;
-    final nearestTrip = hasUpcoming ? upcomingTrips.first : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,65 +203,103 @@ class _HomeContentState extends State<HomeContent> {
             ),
           ),
         ),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 8,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Card(
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: ListTile(
-              contentPadding: const EdgeInsets.all(16),
-              leading: const Icon(Icons.flight_takeoff, color: Colors.teal),
-              title: Text(
-                hasUpcoming
-                    ? nearestTrip!.location
-                    : "No upcoming trips found.",
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-              subtitle:
-                  hasUpcoming
-                      ? Text(
-                        DateFormat(
-                              'd MMMM y',
-                            ).format(nearestTrip!.dateRange.start) +
-                            ' - ' +
-                            DateFormat(
-                              'd MMMM y',
-                            ).format(nearestTrip.dateRange.end),
-                      )
-                      : null,
-              trailing:
-                  hasUpcoming
-                      ? const Icon(Icons.arrow_forward_ios, size: 16)
-                      : null,
-              onTap:
-                  hasUpcoming
-                      ? () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          builder:
-                              (_) => TourDetailSheet(
-                                trip: nearestTrip!,
-                                tripIndex: tripList.indexOf(nearestTrip),
+        hasUpcoming
+            ? SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: BouncingScrollPhysics(),
+              child: Row(
+                children:
+                    upcomingTrips.map((trip) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Container(
+                          width: 365,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 8,
+                                offset: Offset(0, 4),
                               ),
-                        );
-                      }
-                      : null,
+                            ],
+                          ),
+                          child: Card(
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.all(16),
+                              leading: const Icon(
+                                Icons.flight_takeoff,
+                                color: Colors.teal,
+                              ),
+                              title: Text(
+                                trip.location,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              subtitle: Text(
+                                '${DateFormat('d MMMM y').format(trip.dateRange.start)} - '
+                                '${DateFormat('d MMMM y').format(trip.dateRange.end)}',
+                              ),
+                              trailing: const Icon(
+                                Icons.arrow_forward_ios,
+                                size: 16,
+                              ),
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.transparent,
+                                  builder:
+                                      (_) => TourDetailSheet(
+                                        trip: trip,
+                                        tripIndex: tripList.indexOf(trip),
+                                      ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+              ),
+            )
+            : Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Container(
+                  width: 365,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 8,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Card(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const ListTile(
+                      contentPadding: EdgeInsets.all(16),
+                      leading: Icon(Icons.info_outline, color: Colors.grey),
+                      title: Text(
+                        "No upcoming trips found.",
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
       ],
     );
   }
